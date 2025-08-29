@@ -1,0 +1,17 @@
+---
+description: Project-wide development rules for architecture, security, code quality, and documentation
+globs:
+alwaysApply: true
+---
+
+# Architecture
+- Evaluate the whole architecture before creating new directories. Ensure new modules or directories fit the overall design and follow Clean Architecture and Clean Code principles.
+
+# Security
+- Use best security practices: validate and sanitize all user inputs, avoid hardcoding secrets, use environment variables for sensitive data, keep dependencies up to date, and apply the principle of least privilege.
+
+# Code Quality
+- Write clean, maintainable, and well-documented code. Follow style guides, use meaningful names, write tests, and refactor when necessary.
+
+# Documentation
+- Keep documentation up to date, including README and setup/deployment instructions.
