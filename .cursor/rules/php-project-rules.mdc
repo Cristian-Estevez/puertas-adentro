@@ -1,0 +1,28 @@
+---
+description: Project-wide development rules for PHP projects, covering architecture, security, code quality, and documentation
+globs:
+  - "*.php"
+alwaysApply: true
+---
+
+# Architecture
+- Evaluate the whole architecture before creating new directories or modules. Follow SOLID principles and PHP-FIG standards (PSR).
+- Use autoloading (PSR-4) and namespaces to organize code.
+
+# Security
+- Always validate and sanitize user input using PHP's filter functions or libraries.
+- Prevent SQL injection by using prepared statements (PDO or MySQLi).
+- Store secrets and credentials in environment variables, never in code.
+- Keep dependencies up to date with Composer and monitor for vulnerabilities.
+- Escape output to prevent XSS (e.g., htmlspecialchars for HTML output).
+
+# Code Quality
+- Follow PSR-12 coding style and use meaningful names for variables, functions, and classes.
+- Write unit and integration tests using PHPUnit.
+- Use static analysis tools (e.g., PHPStan, Psalm) to catch errors early.
+- Refactor code for readability and maintainability.
+
+# Documentation
+- Document code using PHPDoc comments.
+- Keep README and setup instructions up to date.
+- Document any changes to environment variables or deployment steps.
