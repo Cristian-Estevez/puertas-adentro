@@ -1,29 +1,5 @@
 <?php
-// Requiere: function db(): PDO  y session_start() hecho antes.
-
-// Hola cris el programa supone algunas cosas prehechas sobre la DB aca te las dejo!! Sentite libre de cambiar todo.
-// esta todo comentado para que entiendas bien. Yo jamas conecte una db con un programa asi que muy bien no entiendo.
-
-//id BIGINT PK, username VARCHAR(32) 
-// UNIQUE, email VARCHAR(190) NULL UNIQUE,
-//  password_hash VARCHAR(255), 
-// role ENUM('user','admin') DEFAULT 'user', display_name VARCHAR(60), 
-// is_active TINYINT(1) DEFAULT 1, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, last_login_at DATETIME NULL.
-
-
-
-// ===== Validaciones básicas =====
-
-// ===============================
-// auth.php — Funciones de Auth
-// Requisitos previos:
-//   - function db(): PDO            // Conexión PDO a MariaDB
-//   - session_start()               // Sesión iniciada antes de usar
-//   - Tabla `users` con columnas: id, username, email, password_hash,
-//                                 role ('user'|'admin'), display_name,
-//                                 is_active (TINYINT 0/1), created_at, last_login_at
-// ===============================
-
+require_once 'classes/Database.php';
 
 // ------------------------------------------------------------
 // validate_username($u)
@@ -38,8 +14,8 @@ function validate_username(string $u): ?string {
     if ($u === '' || strlen($u) < 3 || strlen($u) > 32) {
         return 'El usuario debe tener entre 3 y 32 caracteres.';
     }
-    if (!preg_match('/^[A-Za-z0-9._-]+$/', $u)) {
-        return 'El usuario solo puede tener letras, números, punto, guion y guion bajo.';
+    if (!preg_match('/^[A-Za-z0-9][A-Za-z0-9._-]*[A-Za-z0-9]$|^[A-Za-z0-9]$/', $u)) {
+        return 'El usuario solo puede tener letras, números, punto, guion y guion bajo. Debe empezar y terminar con letra o número.';
     }
     return null; // OK
 }
@@ -89,7 +65,8 @@ function validate_email_optional(?string $email): ?string {
 // Rendimiento: LIMIT 1 para cortar al primer match.
 // ------------------------------------------------------------
 function username_exists(string $u): bool {
-    $st = db()->prepare('SELECT 1 FROM users WHERE username = ? LIMIT 1');
+    $db = Database::getInstance()->getConnection();
+    $st = $db->prepare('SELECT 1 FROM users WHERE username = ? LIMIT 1');
     $st->execute([$u]);
     return (bool)$st->fetchColumn();
 }
@@ -102,7 +79,8 @@ function username_exists(string $u): bool {
 // ------------------------------------------------------------
 function email_exists(?string $email): bool {
     if ($email === null || $email === '') return false;
-    $st = db()->prepare('SELECT 1 FROM users WHERE email = ? LIMIT 1');
+    $db = Database::getInstance()->getConnection();
+    $st = $db->prepare('SELECT 1 FROM users WHERE email = ? LIMIT 1');
     $st->execute([$email]);
     return (bool)$st->fetchColumn();
 }
@@ -146,7 +124,8 @@ function register_user(string $username, ?string $email, string $password, strin
     // Insert seguro con parámetros
     $sql = 'INSERT INTO users (username, email, password_hash, role, display_name)
             VALUES (:u, :e, :h, :r, :d)';
-    $st = db()->prepare($sql);
+    $db = Database::getInstance()->getConnection();
+    $st = $db->prepare($sql);
     $st->execute([
         ':u' => $username,
         ':e' => ($email === null || $email === '') ? null : $email,
@@ -174,7 +153,8 @@ function register_user(string $username, ?string $email, string $password, strin
 function login_user(string $login, string $password): bool {
     // 1) Buscar por username O email (el mismo placeholder :l)
     $sql = 'SELECT * FROM users WHERE username = :l OR email = :l LIMIT 1';
-    $st  = db()->prepare($sql);
+    $db = Database::getInstance()->getConnection();
+    $st  = $db->prepare($sql);
     $st->execute([':l' => $login]);
     $u = $st->fetch(PDO::FETCH_ASSOC);
 
@@ -191,7 +171,8 @@ function login_user(string $login, string $password): bool {
     $_SESSION['role']   = $u['role'];          // 'user' | 'admin'
 
     // 5) Marcar último acceso
-    db()->prepare('UPDATE users SET last_login_at = NOW() WHERE id = ?')->execute([$u['id']]);
+    $db = Database::getInstance()->getConnection();
+    $db->prepare('UPDATE users SET last_login_at = NOW() WHERE id = ?')->execute([$u['id']]);
 
     return true;
 }
