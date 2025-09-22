@@ -1,0 +1,22 @@
+RewriteEngine On
+
+# Handle clean URLs - redirect /login to /login.php
+RewriteRule ^login$ login.php [L,QSA]
+
+# Handle other clean URLs as needed
+RewriteRule ^logout$ logout.php [L,QSA]
+RewriteRule ^forgot-password$ forgot-password.php [L,QSA]
+RewriteRule ^register$ register.php [L,QSA]
+
+# Handle root path
+RewriteRule ^$ index.php [L,QSA]
+
+# Security: Prevent direct access to .htaccess
+<Files ".htaccess">
+    Require all denied
+</Files>
+
+# Security: Prevent access to sensitive files
+<FilesMatch "\.(env|log|sql)$">
+    Require all denied
+</FilesMatch>

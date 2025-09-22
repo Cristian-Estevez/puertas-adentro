@@ -1,6 +1,6 @@
 
 <?php
-require_once dirname(__DIR__) . '/config/env.php';
+require_once dirname(__DIR__, 2) . '/config/env.php';
 /*
   Using the Database class:
     require_once 'classes/Database.php';
@@ -18,10 +18,10 @@ class Database {
     private $pdo;
 
     private function __construct() {
-        $host = env('DB_HOST', 'development');
-        $dbname = env('DB_NAME', 'development');
-        $username = env('DB_USER', 'development');
-        $password = env('DB_PASSWORD', 'development');
+        $host = env('DB_HOST');
+        $dbname = env('DB_NAME');
+        $username = env('DB_USER');
+        $password = env('DB_PASSWORD');
 
         $dsn = "mysql:host={$host};dbname={$dbname};charset=utf8mb4";
 

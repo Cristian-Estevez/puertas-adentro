@@ -5,6 +5,20 @@
 // Load environment configuration
 require_once dirname(__DIR__) . '/config/env.php';
 
+// Load login utilities for authentication
+require_once dirname(__DIR__) . '/app/utils/login-utils.php';
+
+// Load View class for templates
+require_once dirname(__DIR__) . '/app/classes/View.php';
+
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Require user to be logged in - redirects to login if not authenticated
+require_login();
+
 // Example usage of environment variables
 $environment = env('ENVIRONMENT', 'development');
 
@@ -26,7 +40,16 @@ if (ENV == "development") {
     error_log("Application started in production mode");
 }
 
-header('Content-Type: text/plain');
-echo "Hello, PHP World!\n";
-echo "Environment: " . $environment . "\n";
-echo "Is Development: " . (ENV == "development" ? 'Yes' : 'No') . "\n";
+// Create dashboard view
+$view = new View();
+$html = $view
+    ->withData([
+        'title' => 'Dashboard - Puertas Adentro',
+        'headerTitle' => 'Puertas Adentro',
+        'userName' => user_name() ?? 'User',
+        'environment' => $environment,
+        'isDevelopment' => ENV == "development"
+    ])
+    ->renderWithLayout('dashboard', 'main');
+    
+echo $html;

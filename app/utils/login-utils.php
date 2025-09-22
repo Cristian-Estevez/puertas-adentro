@@ -1,6 +1,6 @@
 <?php
-require_once 'classes/Database.php';
-require_once 'models/User.php';
+require_once dirname(__DIR__) . '/classes/Database.php';
+require_once dirname(__DIR__) . '/models/User.php';
 
 // Global User instance for utility functions
 $userModel = new User();
@@ -248,7 +248,7 @@ function user_role(): string {
 function require_login(): void {
     if (!user_id()) {
         http_response_code(302);
-        header('Location: /vozdelbarrio/public/login.php');
+        header('Location: /login.php');
         exit;
     }
 }
