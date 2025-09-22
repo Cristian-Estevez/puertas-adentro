@@ -1,29 +1,9 @@
 <?php
-// Requiere: function db(): PDO  y session_start() hecho antes.
+require_once dirname(__DIR__) . '/classes/Database.php';
+require_once dirname(__DIR__) . '/models/User.php';
 
-// Hola cris el programa supone algunas cosas prehechas sobre la DB aca te las dejo!! Sentite libre de cambiar todo.
-// esta todo comentado para que entiendas bien. Yo jamas conecte una db con un programa asi que muy bien no entiendo.
-
-//id BIGINT PK, username VARCHAR(32) 
-// UNIQUE, email VARCHAR(190) NULL UNIQUE,
-//  password_hash VARCHAR(255), 
-// role ENUM('user','admin') DEFAULT 'user', display_name VARCHAR(60), 
-// is_active TINYINT(1) DEFAULT 1, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, last_login_at DATETIME NULL.
-
-
-
-// ===== Validaciones básicas =====
-
-// ===============================
-// auth.php — Funciones de Auth
-// Requisitos previos:
-//   - function db(): PDO            // Conexión PDO a MariaDB
-//   - session_start()               // Sesión iniciada antes de usar
-//   - Tabla `users` con columnas: id, username, email, password_hash,
-//                                 role ('user'|'admin'), display_name,
-//                                 is_active (TINYINT 0/1), created_at, last_login_at
-// ===============================
-
+// Global User instance for utility functions
+$userModel = new User();
 
 // ------------------------------------------------------------
 // validate_username($u)
@@ -38,8 +18,11 @@ function validate_username(string $u): ?string {
     if ($u === '' || strlen($u) < 3 || strlen($u) > 32) {
         return 'El usuario debe tener entre 3 y 32 caracteres.';
     }
-    if (!preg_match('/^[A-Za-z0-9._-]+$/', $u)) {
-        return 'El usuario solo puede tener letras, números, punto, guion y guion bajo.';
+    if (!preg_match('/^[A-Za-z0-9][A-Za-z0-9._-]*[A-Za-z0-9]$|^[A-Za-z0-9]$/', $u)) {
+        return 'El usuario solo puede tener letras, números, punto, guion y guion bajo. Debe empezar y terminar con letra o número.';
+    }
+    if (username_exists($u)) {
+        return 'El nombre de usuario ya esta en uso.';
     }
     return null; // OK
 }
@@ -65,14 +48,14 @@ function validate_password(string $p, string $p2): ?string {
 
 
 // ------------------------------------------------------------
-// validate_email_optional($email)
-// Valida un email si viene informado (en este proyecto es opcional).
-// Devuelve NULL si está vacío o válido; si es inválido, devuelve un texto de error.
+// validate_email($email)
+// Valida un email (obligatorio).
+// Devuelve NULL si es válido; si es inválido o vacío, devuelve un texto de error.
 // ------------------------------------------------------------
-function validate_email_optional(?string $email): ?string {
-    $email = $email !== null ? trim($email) : null;
-    if ($email === null || $email === '') {
-        return null; // Sin email: no hay nada que validar
+function validate_email(string $email): ?string {
+    $email = trim($email);
+    if ($email === '') {
+        return 'El email es obligatorio.';
     }
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return 'Email inválido.';
@@ -89,22 +72,19 @@ function validate_email_optional(?string $email): ?string {
 // Rendimiento: LIMIT 1 para cortar al primer match.
 // ------------------------------------------------------------
 function username_exists(string $u): bool {
-    $st = db()->prepare('SELECT 1 FROM users WHERE username = ? LIMIT 1');
-    $st->execute([$u]);
-    return (bool)$st->fetchColumn();
+    global $userModel;
+    return $userModel->findByUsername($u) !== null;
 }
 
 
 // ------------------------------------------------------------
 // email_exists($email)
-// Igual que la de username, pero para email (si se suministra).
-// Devuelve true si existe; false si no o si el email está vacío.
+// Verifica si ya existe un usuario con ese email (UNIQUE).
+// Devuelve true si existe; false si no.
 // ------------------------------------------------------------
-function email_exists(?string $email): bool {
-    if ($email === null || $email === '') return false;
-    $st = db()->prepare('SELECT 1 FROM users WHERE email = ? LIMIT 1');
-    $st->execute([$email]);
-    return (bool)$st->fetchColumn();
+function email_exists(string $email): bool {
+    global $userModel;
+    return $userModel->findByEmail($email) !== null;
 }
 
 
@@ -112,8 +92,8 @@ function email_exists(?string $email): bool {
 // register_user($username, $email, $password, $password2)
 // Crea un nuevo usuario con role 'user' si pasa todas las validaciones.
 // Flujo:
-//   1) Valida formato de username, email opcional y password.
-//   2) Chequea unicidad de username y email (si hay).
+//   1) Valida formato de username, email obligatorio y password.
+//   2) Chequea unicidad de username y email.
 //   3) Hashea la contraseña con password_hash (bcrypt).
 //   4) Inserta el registro en la tabla `users` con role 'user' y display_name = username.
 // Devuelve:
@@ -121,14 +101,14 @@ function email_exists(?string $email): bool {
 //   - ['ok' => false, 'errors' => [...]] con el listado de errores si falló
 // Notas:
 //   - No hace login automático; podés hacerlo aparte si querés.
-//   - No setea email obligatorio (para este proyecto local).
+//   - Email es obligatorio.
 // ------------------------------------------------------------
-function register_user(string $username, ?string $email, string $password, string $password2): array {
+function register_user(string $username, string $email, string $password, string $password2): array {
     $errors = [];
 
     // Validaciones de formato
     if ($e = validate_username($username))              $errors[] = $e;
-    if ($e = validate_email_optional($email))           $errors[] = $e;
+    if ($e = validate_email($email))                    $errors[] = $e;
     if ($e = validate_password($password, $password2))  $errors[] = $e;
 
     // Unicidad en DB
@@ -146,13 +126,13 @@ function register_user(string $username, ?string $email, string $password, strin
     // Insert seguro con parámetros
     $sql = 'INSERT INTO users (username, email, password_hash, role, display_name)
             VALUES (:u, :e, :h, :r, :d)';
-    $st = db()->prepare($sql);
-    $st->execute([
-        ':u' => $username,
-        ':e' => ($email === null || $email === '') ? null : $email,
-        ':h' => $hash,
-        ':r' => 'user',
-        ':d' => $display,
+    global $userModel;
+    $userModel->create([
+        'username' => $username,
+        'email' => $email,
+        'password_hash' => $hash,
+        'role' => 'user',
+        'display_name' => $display,
     ]);
 
     return ['ok' => true];
@@ -172,11 +152,10 @@ function register_user(string $username, ?string $email, string $password, strin
 // Devuelve true si inició correctamente; false si credenciales inválidas o usuario inactivo.
 // ------------------------------------------------------------
 function login_user(string $login, string $password): bool {
-    // 1) Buscar por username O email (el mismo placeholder :l)
-    $sql = 'SELECT * FROM users WHERE username = :l OR email = :l LIMIT 1';
-    $st  = db()->prepare($sql);
-    $st->execute([':l' => $login]);
-    $u = $st->fetch(PDO::FETCH_ASSOC);
+    global $userModel;
+    
+    // 1) Buscar por username O email usando el modelo User
+    $u = $userModel->findByLogin($login);
 
     // 2) Usuario inexistente o inactivo
     if (!$u) return false;
@@ -190,8 +169,8 @@ function login_user(string $login, string $password): bool {
     $_SESSION['uname']  = $u['username'];      // Nombre de usuario (para mostrar en UI)
     $_SESSION['role']   = $u['role'];          // 'user' | 'admin'
 
-    // 5) Marcar último acceso
-    db()->prepare('UPDATE users SET last_login_at = NOW() WHERE id = ?')->execute([$u['id']]);
+    // 5) Marcar último acceso usando el modelo User
+    $userModel->updateLastLogin($u['id']);
 
     return true;
 }
@@ -269,7 +248,7 @@ function user_role(): string {
 function require_login(): void {
     if (!user_id()) {
         http_response_code(302);
-        header('Location: /vozdelbarrio/public/login.php');
+        header('Location: /login.php');
         exit;
     }
 }

@@ -26,3 +26,10 @@ alwaysApply: true
 - Document code using PHPDoc comments.
 - Keep README and setup instructions up to date.
 - Document any changes to environment variables or deployment steps.
+
+# Important information
+
+Know that the httpd.conf file looks like:
+" ...DocumentRoot "/opt/lampp/htdocs/puertas-adentro/public"
+<Directory "/opt/lampp/htdocs/puertas-adentro/public">
+..."
