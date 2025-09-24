@@ -84,17 +84,17 @@ CREATE TABLE comments (
 CREATE TABLE likes (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,                        -- Unique like ID
     post_id BIGINT NOT NULL,                                    -- FK to the liked post
-    user_by BIGINT NOT NULL,                                    -- FK to the user who liked it
+    user_id BIGINT NOT NULL,                                    -- FK to the user who liked it
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,             -- When the like was created
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- When the like was updated
     deleted_at TIMESTAMP NULL DEFAULT NULL,                     -- Soft-delete timestamp (if needed)
 
     -- Foreign key constraints
     CONSTRAINT fk_likes_post FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-    CONSTRAINT fk_likes_user FOREIGN KEY (user_by) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_likes_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
 
     -- Enforce that a user can like a post only once
-    UNIQUE KEY uq_likes_post_user (post_id, user_by)
+    UNIQUE KEY uq_likes_post_user (post_id, user_id)
 );
 
 -- ===============================
@@ -103,8 +103,39 @@ CREATE TABLE likes (
 -- ===============================
 -- Note: password = "password", hashed using bcrypt
 
-INSERT INTO users (email, first_name, last_name, username, password, active, role, created_at, updated_at) VALUES 
-('admin@example.com', 'Admin', 'User', 'admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'admin', NOW(), NOW());
+INSERT INTO users (email, first_name, last_name, username, password, active, role, created_at, updated_at) VALUES
+('admin@example.com', 'Admin', 'User', 'admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'admin', NOW(), NOW()),
+('user@example.com', 'User', 'User', 'user', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user', NOW(), NOW()),
+('alice@example.com', 'Alice', 'Wonderland', 'alice', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user', NOW(), NOW()),
+('bob@example.com', 'Bob', 'Builder', 'bob', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user', NOW(), NOW()),
+('charlie@example.com', 'Charlie', 'Brown', 'charlie', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user', NOW(), NOW());
 
-INSERT INTO users (email, first_name, last_name, username, password, active, role, created_at, updated_at) VALUES 
-('user@example.com', 'User', 'User', 'user', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user', NOW(), NOW());
+-- ===============================
+-- INSERT 10 POSTS
+-- Assume users have auto-increment IDs starting from 1
+-- ===============================
+INSERT INTO posts (title, body, created_by, updated_by, created_at, updated_at) VALUES
+('Post 1', 'Content of post 1', 2, 2, NOW(), NOW()),
+('Post 2', 'Content of post 2', 3, 3, NOW(), NOW()),
+('Post 3', 'Content of post 3', 4, 4, NOW(), NOW()),
+('Post 4', 'Content of post 4', 5, 5, NOW(), NOW()),
+('Post 5', 'Content of post 5', 2, 2, NOW(), NOW()),
+('Post 6', 'Content of post 6', 3, 3, NOW(), NOW()),
+('Post 7', 'Content of post 7', 4, 4, NOW(), NOW()),
+('Post 8', 'Content of post 8', 5, 5, NOW(), NOW()),
+('Post 9', 'Content of post 9', 2, 2, NOW(), NOW()),
+('Post 10', 'Content of post 10', 3, 3, NOW(), NOW());
+
+-- ===============================
+-- INSERT SOME LIKES
+-- User IDs 2–5 liking various posts
+-- ===============================
+INSERT INTO likes (post_id, user_id, created_at, updated_at) VALUES
+(1, 3, NOW(), NOW()),
+(1, 4, NOW(), NOW()),
+(2, 2, NOW(), NOW()),
+(3, 5, NOW(), NOW()),
+(3, 2, NOW(), NOW()),
+(4, 3, NOW(), NOW()),
+(5, 4, NOW(), NOW()),
+(6, 5, NOW(), NOW());
