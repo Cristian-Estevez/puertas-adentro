@@ -26,8 +26,10 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,                             -- Hashed password (bcrypt, Argon2, etc.)
     active BOOLEAN DEFAULT TRUE,                                -- Whether the account is active or disabled
     role ENUM('user', 'admin') NOT NULL DEFAULT 'user',         -- Role of the user (limited set)
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,             -- Account creation timestamp
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,            -- Account creation timestamp
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Last update timestamp
+    deleted_at TIMESTAMP NULL DEFAULT NULL,                     -- Timestamp when account was soft-deleted
+    updated_by BIGINT DEFAULT NULL,                             -- FK to user who last updated this account (nullable)
     last_login_at TIMESTAMP NULL,                               -- Last time the user logged in (nullable)
 
     -- Helpful indexes for search/filtering
@@ -35,7 +37,9 @@ CREATE TABLE users (
     INDEX idx_username (username),
     INDEX idx_active (active),
     INDEX idx_role (role),
-    INDEX idx_created_at (created_at)
+    INDEX idx_created_at (created_at),
+    -- Define foreign key relationship for updated_by
+    CONSTRAINT fk_users_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON
 );
 
 -- ===============================
