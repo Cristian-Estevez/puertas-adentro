@@ -44,7 +44,7 @@ class User extends Model
         return $stmt->rowCount() > 0;
     }
 
-    public function update($user,$updated_by)
+    public function update($user, $updatedBy)
     {
         $stmt = $this->db->prepare(
             "UPDATE users 
@@ -70,13 +70,13 @@ class User extends Model
             'role'       => $user['role'],
             'created_at' => $user['created_at'],
             'updated_at' => date('Y-m-d H:i:s'),
-            'updated_by' => $updated_by,
+            'updated_by' => $updatedBy,
             'id'         => $user['id']
         ]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function delete($id, $updated_by)
+    public function delete($id, $updatedBy)
     {
         $stmt = $this->db->prepare(
             "UPDATE users 
@@ -86,7 +86,7 @@ class User extends Model
                 updated_by = :updated_by
             WHERE id = :id"
         );
-        $stmt->execute(['id' => $id, 'updated_by' => $updated_by]);
+        $stmt->execute(['id' => $id, 'updated_by' => $updatedBy]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -112,7 +112,7 @@ class User extends Model
         return $stmt->rowCount() > 0;
     }
 
-    public function updatePassword($id, $hashedPassword, $updated_by)
+    public function updatePassword($id, $hashedPassword, $updatedBy)
     {
         $stmt = $this->db->prepare(
             "UPDATE users 
@@ -124,7 +124,7 @@ class User extends Model
         $stmt->execute([
             'password' => $hashedPassword,
             'id' => $id,
-            'updated_by' => $updated_by
+            'updated_by' => $updatedBy
         ]);
         return $stmt->rowCount() > 0;
     }
