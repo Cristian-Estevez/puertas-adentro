@@ -2,6 +2,8 @@
 
 A modern PHP web application built with MVC architecture, featuring a custom view system and clean separation of concerns.
 
+📝 **[Click here to view the XAMPP/LAMP Setup Guide](documentation/SETUP-GUIDE.md)** - Step by step instructions to get the project running.
+
 ## Project Structure
 
 ```
