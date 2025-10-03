@@ -40,16 +40,36 @@ if (ENV == "development") {
     error_log("Application started in production mode");
 }
 
-// Create dashboard view
+// Set content type
+header('Content-Type: text/html; charset=UTF-8');
+
+// Render view based on user role
 $view = new View();
-$html = $view
-    ->withData([
-        'title' => 'Dashboard - Puertas Adentro',
-        'headerTitle' => 'Puertas Adentro',
-        'userName' => user_name() ?? 'User',
-        'environment' => $environment,
-        'isDevelopment' => ENV == "development"
-    ])
-    ->renderWithLayout('dashboard', 'main');
-    
+
+if (user_role() == 'admin') {
+    // Render dashboard for admin users
+    $html = $view
+        ->withData([
+            'userName' => user_name() ?? 'User',
+            'environment' => $environment,
+            'isDevelopment' => ENV == "development"
+        ])
+        ->renderWithLayout('dashboard', 'main', [
+            'title' => 'Dashboard - Puertas Adentro',
+            'headerTitle' => 'Puertas Adentro'
+        ]);
+} else {
+    // Render home for regular users
+    $html = $view
+        ->withData([
+            'userName' => user_name() ?? 'User',
+            'environment' => $environment,
+            'isDevelopment' => ENV == "development"
+        ])
+        ->renderWithLayout('home', 'main', [
+            'title' => 'Home - Puertas Adentro',
+            'headerTitle' => 'Puertas Adentro'
+        ]);
+}
+
 echo $html;
