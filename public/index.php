@@ -11,6 +11,11 @@ require_once dirname(__DIR__) . '/app/utils/login-utils.php';
 // Load View class for templates
 require_once dirname(__DIR__) . '/app/classes/View.php';
 
+// Load HomeController for regular users
+require_once dirname(__DIR__) . '/app/controllers/HomeController.php';
+
+require_once dirname(__DIR__) . '/app/controllers/AdminController.php';
+
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -48,28 +53,12 @@ $view = new View();
 
 if (user_role() == 'admin') {
     // Render dashboard for admin users
-    $html = $view
-        ->withData([
-            'userName' => user_name() ?? 'User',
-            'environment' => $environment,
-            'isDevelopment' => ENV == "development"
-        ])
-        ->renderWithLayout('dashboard', 'main', [
-            'title' => 'Dashboard - Puertas Adentro',
-            'headerTitle' => 'Puertas Adentro'
-        ]);
+    $adminController = new AdminController();
+    $adminController->showView();
+    exit; // Exit to prevent rendering the home view below
 } else {
-    // Render home for regular users
-    $html = $view
-        ->withData([
-            'userName' => user_name() ?? 'User',
-            'environment' => $environment,
-            'isDevelopment' => ENV == "development"
-        ])
-        ->renderWithLayout('home', 'main', [
-            'title' => 'Home - Puertas Adentro',
-            'headerTitle' => 'Puertas Adentro'
-        ]);
+    // Use HomeController for regular users (includes posts data)
+    $homeController = new HomeController();
+    $homeController->showView();
+    exit; // Exit to prevent rendering the admin view below
 }
-
-echo $html;

@@ -54,7 +54,7 @@ class ForgotPasswordController
 
         // change password logic here
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $this->userModel->updatePassword((int)$user['id'], $hashedPassword);
+        $this->userModel->updatePassword((int)$user['id'], $hashedPassword, (int)$user['id']);
         $this->showForm([], '', true);
     }
 }
