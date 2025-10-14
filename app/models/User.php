@@ -25,7 +25,7 @@ class User extends Model
                 username, 
                 role, 
                 last_login_at,
-                image_base64
+                image_url
             FROM users 
             WHERE id = :id"
         );

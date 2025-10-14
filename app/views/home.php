@@ -93,7 +93,7 @@
           <article class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
             <div class="p-4">
               <div class="flex items-start gap-4">
-                <img class="size-12 rounded-full" alt="Avatar" src="<?= $post['author']['image_base64'] ?? '' ?>" />
+                <img class="size-12 rounded-full" alt="Avatar" src="<?= $post['author']['image_url'] ?? '' ?>" />
                 <div class="flex-1">
                   <h3 class="text-base font-semibold"><?= $post['title'] ?></h3>
                   <p class="text-sm text-gray-500">Publicado por <?= $post['created_by'] ?> · hace 2 días</p>
@@ -106,7 +106,7 @@
             </div>
 
             <div class="px-4">
-              <img class="w-full rounded-lg" alt="Imagen de la publicación" src="<?= $post['image_base64'] ?? '' ?>" />
+              <img class="w-full rounded-lg" alt="Imagen de la publicación" src="<?= $post['image_url'] ?? '' ?>" />
             </div>
 
             <div class="flex items-center gap-4 px-4 py-2">
@@ -125,7 +125,7 @@
               <?php foreach ($post['comments'] as $comment): ?>
                 <div class="flex items-start gap-3">
                   <img class="w-8 h-8 rounded-full" alt="Avatar"
-                       src="<?= $comment['author']['image_base64'] ?? 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png' ?>" />
+                       src="<?= $comment['author']['image_url'] ?? 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png' ?>" />
                   <div class="flex-1 bg-gray-50 border border-gray-100 rounded-md p-2">
                     <p class="text-sm font-semibold text-gray-800">
                       <?= $comment['author']['name'] ?? 'Usuario' ?>

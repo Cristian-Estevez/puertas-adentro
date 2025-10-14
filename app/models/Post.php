@@ -17,9 +17,9 @@ class Post extends Model
     {
         $stmt = $this->db->prepare("
             INSERT INTO posts (
-                created_by, title, body, image_base64
+                created_by, title, body, image_url
             ) VALUES (
-                :created_by, :title, :body, :image_base64
+                :created_by, :title, :body, :image_url
             )
         ");
 
@@ -29,7 +29,7 @@ class Post extends Model
             ':created_by' => $post['created_by'],
             ':title'      => $post['title'],
             ':body'       => $post['body'],
-            ':image_base64' => $post['image_base64'] ?? null,
+            ':image_url' => $post['image_url'] ?? null,
         ]);
 
         return $this->db->lastInsertId();
@@ -43,7 +43,7 @@ class Post extends Model
             SET 
                 title = :title,
                 body = :body,
-                image_base64 = :image_base64,
+                image_url = :image_url,
                 updated_by = :updated_by,
                 updated_at = :updated_at
             WHERE id = :id
@@ -52,7 +52,7 @@ class Post extends Model
         $stmt->execute([
             ':title'       => $post['title'],
             ':body'        => $post['body'],
-            ':image_base64' => $post['image_base64'] ?? null,
+            ':image_url' => $post['image_url'] ?? null,
             ':updated_by'  => $post['updated_by'],
             ':updated_at'  => date('Y-m-d H:i:s'),
             ':id'          => $post['id']
