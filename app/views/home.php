@@ -79,7 +79,7 @@
                             <img class="size-12 rounded-full" alt="Avatar" src="<?= $post['author']['image_url'] ?? '' ?>" />
                             <div class="flex-1">
                                 <h3 class="text-base font-semibold"><?= $post['title'] ?></h3>
-                                <p class="text-sm text-gray-500">Publicado por <?= $post['created_by'] ?> · hace 2 días</p>
+                                <p class="text-sm text-gray-500">Publicado por <?= $post['author']['username'] ?> · <?= $post['updated_at_es']; ?></p>
                                 <p class="mt-2 text-sm"><?= $post['body'] ?? '' ?></p>
                             </div>
                             <button class="text-gray-400 hover:text-gray-600" title="Más opciones">

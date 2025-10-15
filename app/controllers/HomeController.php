@@ -3,6 +3,7 @@ require_once dirname(__DIR__) . '/classes/View.php';
 require_once dirname(__DIR__) . '/models/Post.php';
 require_once dirname(__DIR__) . '/models/User.php';
 require_once dirname(__DIR__) . '/models/Comment.php';
+require_once dirname(__DIR__) . '/utils/date-utils.php';
 
 session_start();
 
@@ -46,6 +47,7 @@ class HomeController
 
             $author = $this->userModel->findById($post['created_by']);
 
+            $post['updated_at_es'] = formatToSpanish($post['updated_at']);
             $post['comments'] = $commentsWithAutor;
             $post['author'] = $author;
 
