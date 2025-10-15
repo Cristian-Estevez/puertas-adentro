@@ -138,12 +138,55 @@ INSERT INTO likes (post_id, user_id, created_at, updated_at) VALUES
 -- SEED: COMMENTS
 -- ===============================
 INSERT INTO comments (text, post_id, created_by, updated_by, created_at, updated_at) VALUES
+-- Comments for Post 1 (Majestic Mountain Landscape)
 ('Great post! The mountain view is breathtaking!', 1, 3, 3, NOW(), NOW()),
 ('Thanks for sharing this amazing landscape!', 1, 4, 4, NOW(), NOW()),
+('Where was this taken? The mountains look incredible!', 1, 5, 5, NOW(), NOW()),
+('I need to visit this place! Can you share the location?', 1, 6, 6, NOW(), NOW()),
+('The clouds add such drama to the scene.', 1, 7, 7, NOW(), NOW()),
+
+-- Comments for Post 2 (Sunset Mountain Trail)
 ('The sunset colors are incredible here.', 2, 2, 2, NOW(), NOW()),
+('Perfect lighting for a mountain hike!', 2, 4, 4, NOW(), NOW()),
+('This reminds me of my last hiking trip.', 2, 5, 5, NOW(), NOW()),
+('The path looks challenging but worth it.', 2, 3, 3, NOW(), NOW()),
+
+-- Comments for Post 3 (Golden Sunrise View)
 ('This golden sunrise is absolutely stunning!', 3, 5, 5, NOW(), NOW()),
+('Nature at its finest moment.', 3, 2, 2, NOW(), NOW()),
+('The golden hour is magical!', 3, 6, 6, NOW(), NOW()),
+('Early morning shots are always the best.', 3, 4, 4, NOW(), NOW()),
+('What camera settings did you use?', 3, 7, 7, NOW(), NOW()),
+
+-- Comments for Post 4 (Mountain Panorama)
 ('The panoramic view is mesmerizing.', 4, 2, 2, NOW(), NOW()),
+('This perspective is everything!', 4, 3, 3, NOW(), NOW()),
+('Dusk is the perfect time for landscapes.', 4, 6, 6, NOW(), NOW()),
+('The composition is perfect.', 4, 5, 5, NOW(), NOW()),
+
+-- Comments for Post 5 (Hiking Adventure)
 ('Love the hiking trail! Looks like a great adventure.', 5, 3, 3, NOW(), NOW()),
+('This inspires me to go hiking!', 5, 4, 4, NOW(), NOW()),
+('What a beautiful day for hiking!', 5, 7, 7, NOW(), NOW()),
+('The mountains in the background are stunning.', 5, 2, 2, NOW(), NOW()),
+('Is this a difficult trail?', 5, 6, 6, NOW(), NOW()),
+
+-- Comments for Post 6 (Coastal Sunset)
 ('The coastal sunset is so peaceful.', 6, 4, 4, NOW(), NOW()),
+('Those colors are unreal!', 6, 2, 2, NOW(), NOW()),
+('Beach sunsets are the best.', 6, 5, 5, NOW(), NOW()),
+('Perfect end to a day.', 6, 7, 7, NOW(), NOW()),
+('The reflection on the water is beautiful.', 6, 3, 3, NOW(), NOW()),
+
+-- Comments for Post 7 (Twilight Valley)
 ('This valley vista is absolutely magical!', 7, 5, 5, NOW(), NOW()),
-('The morning light in this shot is perfect.', 8, 2, 2, NOW(), NOW());
+('The depth in this shot is amazing.', 7, 3, 3, NOW(), NOW()),
+('Love how the light falls on the landscape.', 7, 2, 2, NOW(), NOW()),
+('Nature never disappoints!', 7, 6, 6, NOW(), NOW()),
+
+-- Comments for Post 8 (Dawn Breaking)
+('The morning light in this shot is perfect.', 8, 2, 2, NOW(), NOW()),
+('Dawn is such a peaceful time.', 8, 4, 4, NOW(), NOW()),
+('The soft morning colors are beautiful.', 8, 7, 7, NOW(), NOW()),
+('This makes me want to wake up early!', 8, 5, 5, NOW(), NOW()),
+('Gorgeous morning capture!', 8, 3, 3, NOW(), NOW());
