@@ -87,4 +87,16 @@ class Post extends Model
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getAllPostsWithAuthors()
+    {
+        $stmt = $this->db->prepare("
+            SELECT p.*, u.first_name, u.last_name, u.email 
+            FROM posts p
+            JOIN users u ON p.created_by = u.id
+            WHERE p.deleted_at IS NULL
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

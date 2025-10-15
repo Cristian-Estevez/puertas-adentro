@@ -1,16 +1,23 @@
 <?php
 require_once dirname(__DIR__) . '/classes/View.php';
 require_once dirname(__DIR__) . '/models/User.php';
+require_once dirname(__DIR__) . '/models/Post.php';
+require_once dirname(__DIR__) . '/models/Comment.php';
+
 
 class AdminController
 {
     private $view;
     private $userModel;
+    private $postModel;
+    private $commentModel;
 
     public function __construct()
     {
         $this->view = new View();
         $this->userModel = new User();
+        $this->postModel = new Post();
+        $this->commentModel = new Comment();
     }
 
     private function validateAdminAccess(): void
@@ -44,12 +51,18 @@ class AdminController
             exit;
         }
         $user = $this->userModel->findById($userId);
+        $posts = $this->postModel->getAllPostsWithAuthors();
+        $users = $this->userModel->getAllUsers();
+        $comments = $this->commentModel->getAllComments();
 
         $content = $this->view
             ->with('user', $user)
             ->renderWithLayout('dashboard', 'main', [
                 'title' => 'Dashboard - Puertas Adentro',
-                'headerTitle' => 'Puertas Adentro'
+                'headerTitle' => 'Puertas Adentro',
+                'posts' => $posts,
+                'users' => $users,
+                'comments' => $comments
             ]);
 
         echo $content;

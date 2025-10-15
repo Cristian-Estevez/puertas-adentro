@@ -32,100 +32,72 @@
             </div>
 
             <!-- Botón logout -->
-            <button id="logoutBtn"
-                class="inline-flex items-center gap-2 h-10 px-4 rounded-md text-sm font-medium border border-gray-200 hover:bg-gray-100">
-                <span class="material-symbols-outlined ">logout</span>
-                <span>Cerrar sesión</span>
-            </button>
+            <?php include __DIR__ . '/partials/logout-button.php'; ?>
         </div>
     </div>
 </header>
 
-<!-- 🔹 MENÚ SUPERIOR -->
-<nav class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-6 py-2 flex items-center gap-6 text-sm font-medium">
-        <button class="nav-tab text-blue-700 border-b-2 border-blue-700 pb-2" data-section="inicio">Inicio</button>
-        <button class="nav-tab text-gray-600 hover:text-blue-700 pb-2" data-section="usuarios">Usuarios</button>
-        <button class="nav-tab text-gray-600 hover:text-blue-700 pb-2" data-section="posts">Posts</button>
-    </div>
-</nav>
 
 <!-- 🔸 CONTENIDO PRINCIPAL -->
 <main id="mainContent" class="flex-1 px-6 py-8 max-w-7xl mx-auto space-y-10">
-
-    <!-- 🏠 SECCIÓN 1: INICIO -->
-    <section id="inicio" class="section">
+    
+    <section id="inicio">
         <h2 class="text-xl font-semibold mb-6">Resumen general</h2>
-
+        
         <!-- Tarjetas resumen -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                 <p class="text-sm text-gray-500">Noticias publicadas</p>
-                <h3 class="text-2xl font-bold text-blue-700"><?php echo 12; ?></h3>
+                <h3 class="text-2xl font-bold text-blue-700"><?php echo count($posts); ?></h3>
             </div>
             <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-                <p class="text-sm text-gray-500">Usuarios logueados</p>
-                <h3 class="text-2xl font-bold text-green-600"><?php echo 8; ?></h3>
+                <p class="text-sm text-gray-500">Usuarios registrados</p>
+                <h3 class="text-2xl font-bold text-green-600"><?php echo count($users); ?></h3>
             </div>
             <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-                <p class="text-sm text-gray-500">Posts activos</p>
-                <h3 class="text-2xl font-bold text-gray-600"><?php echo 5; ?></h3>
+                <p class="text-sm text-gray-500">Comentarios</p>
+                <h3 class="text-2xl font-bold text-gray-600"><?php echo count($comments); ?></h3>
             </div>
-        </div>
-
-        <!-- Actividad reciente -->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
-            <h4 class="font-semibold px-4 py-2 border-b">Actividad reciente</h4>
-            <ul class="divide-y text-sm">
-                <li class="px-4 py-2 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-blue-600">campaign</span>
-                    Nueva noticia publicada por Admin
-                </li>
-                <li class="px-4 py-2 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-gray-600">article</span>
-                    Post agregado por “Juan Pérez”
-                </li>
-                <li class="px-4 py-2 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-green-600">person</span>
-                    Usuario “Lucía” inició sesión
-                </li>
-            </ul>
         </div>
     </section>
 
-    <!-- 👥 SECCIÓN 2: USUARIOS -->
-    <section id="usuarios" class="section hidden">
-        <h2 class="text-xl font-semibold mb-6">Usuarios logueados</h2>
+    <nav class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-6 py-2 flex items-center gap-6 text-sm font-medium">
+            <button class="nav-tab text-blue-700 border-b-2 border-blue-700 pb-2" data-section="usuarios">Usuarios</button>
+            <button class="nav-tab text-gray-600 hover:text-blue-700 pb-2" data-section="posts">Noticias</button>
+        </div>
+    </nav>
+
+    <section id="usuarios" class="section">
+        <h2 class="text-xl font-semibold mb-6">Usuarios registrados</h2>
         <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
             <table class="w-full text-sm text-left text-gray-600">
                 <thead class="bg-gray-50 border-b border-gray-100 text-gray-700">
                     <tr>
                         <th class="px-4 py-2">Usuario</th>
                         <th class="px-4 py-2">Correo</th>
+                        <th class="px-4 py-2">Nombre</th>
+                        <th class="px-4 py-2">Apellido</th>
                         <th class="px-4 py-2 text-right">Acción</th>
                     </tr>
                 </thead>
                 <tbody id="userTable">
-                    <tr>
-                        <td class="px-4 py-2">Juan Pérez</td>
-                        <td class="px-4 py-2">juanp@example.com</td>
-                        <td class="px-4 py-2 text-right">
-                            <button class="text-red-600 hover:underline delete-user">Borrar</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-2">Lucía Gómez</td>
-                        <td class="px-4 py-2">lucia@example.com</td>
-                        <td class="px-4 py-2 text-right">
-                            <button class="text-red-600 hover:underline delete-user">Borrar</button>
-                        </td>
-                    </tr>
+                    <?php foreach ($users as $user): ?>
+                        <tr>
+                            <td class="px-4 py-2"><?= $user['username'] ?></td>
+                            <td class="px-4 py-2"><?= $user['email'] ?></td>
+                            <td class="px-4 py-2"><?= $user['first_name'] ?></td>
+                            <td class="px-4 py-2"><?= $user['last_name'] ?></td>
+                            <td class="px-4 py-2 text-right">
+                                <button class="text-red-600 hover:underline delete-user">Borrar</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     </section>
 
-    <!-- 📰 SECCIÓN 3: POSTS -->
     <section id="posts" class="section hidden">
         <h2 class="text-xl font-semibold mb-6">Posts publicados</h2>
         <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
@@ -139,31 +111,23 @@
                     </tr>
                 </thead>
                 <tbody id="postsTable">
-                    <tr>
-                        <td class="px-4 py-2">Emanuel García</td>
-                        <td class="px-4 py-2">Corte de agua programado</td>
-                        <td class="px-4 py-2">10/10/2025</td>
-                        <td class="px-4 py-2 text-right">
-                            <button class="text-blue-600 hover:underline mr-3">Ver</button>
-                            <button class="text-red-600 hover:underline delete-post">Eliminar</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-2">Marcos Carcavallo</td>
-                        <td class="px-4 py-2">Reparación de luminarias</td>
-                        <td class="px-4 py-2">09/10/2025</td>
-                        <td class="px-4 py-2 text-right">
-                            <button class="text-blue-600 hover:underline mr-3">Ver</button>
-                            <button class="text-red-600 hover:underline delete-post">Eliminar</button>
-                        </td>
-                    </tr>
+                    <?php foreach ($posts as $post): ?>
+                        <tr>
+                            <td class="px-4 py-2"><?= $post['first_name'] ?> <?= $post['last_name'] ?></td>
+                            <td class="px-4 py-2"><?= $post['title'] ?></td>
+                            <td class="px-4 py-2"><?= $post['updated_at'] ?></td>
+                            <td class="px-4 py-2 text-right">
+                                <button class="text-blue-600 hover:underline mr-3">Ver</button>
+                                <button class="text-red-600 hover:underline delete-post">Eliminar</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     </section>
 </main>
 
-<!-- 🔹 SCRIPT -->
 <script>
     // Mostrar / ocultar panel admin
     const avatar = document.getElementById("avatarImg");
@@ -195,12 +159,5 @@
     // Eliminar post
     document.querySelectorAll(".delete-post").forEach(btn => {
         btn.addEventListener("click", e => e.target.closest("tr").remove());
-    });
-
-    // Logout
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = "login.php";
     });
 </script>
