@@ -12,22 +12,10 @@
 
 </head>
 <body style='font-family:"Public Sans","Noto Sans",sans-serif;' class="bg-white">
-    <!-- <header class="header">
-        <div class="container">
-            <h1><?= $this->escape($headerTitle ?? 'Puertas Adentro') ?></h1>
-        </div>
-    </header> -->
-    
     <main class="main-content">
         <div class="container">
             <?= $content ?? '' ?>
         </div>
     </main>
-    
-    <!-- <footer class="footer">
-        <div class="container">
-            <p>&copy; <?= date('Y') ?> Puertas Adentro. Todos los derechos reservados.</p>
-        </div>
-    </footer> -->
 </body>
 </html>
