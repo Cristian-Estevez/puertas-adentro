@@ -22,7 +22,14 @@
                 <!-- Menú de selección de avatar -->
                 <div
                     id="avatarMenu"
-                    class="hidden absolute right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg p-2 w-32 z-50">
+                    class="hidden absolute right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg p-2 w-56 z-50">
+                    
+                    <h4 class="font-semibold text-sm mb-1">Administrador</h4>
+                    <p class="text-sm"><?= $user['first_name'] ?> <?= $user['last_name'] ?></p>
+                    <button onclick="window.location.href='/'"
+                        class="text-blue-700 text-sm hover:underline">
+                        Ir al panel de administración
+                    </button>
                     <p class="text-xs font-medium mb-2 text-center text-gray-500">Elegir avatar</p>
                     <div class="flex justify-around">
                         <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Hombre"
@@ -48,27 +55,8 @@
         <!-- ENCABEZADO -->
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
             <h1 class="text-3xl font-bold tracking-tight">Últimas novedades del barrio</h1>
-            <button
-                class="btn-primary inline-flex items-center gap-2 h-10 px-4 rounded-md text-sm font-medium shadow-sm bg-blue-600 text-white hover:bg-blue-700">
-                <span class="material-symbols-outlined">add</span>
-                <span>Crear noticia</span>
-            </button>
         </div>
 
-        <!-- BUSCADOR -->
-        <div class="mb-6">
-            <div class="relative">
-                <span class="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
-                <input
-                    class="w-full rounded-md border border-gray-200 bg-white py-2 pl-10 pr-4 placeholder:text-gray-400"
-                    placeholder="Buscar por autor, título o contenido" />
-            </div>
-        </div>
-
-        <!-- FILTRO -->
-        <div class="mb-6">
-            <button class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium">Todas las novedades</button>
-        </div>
 
         <!-- TARJETAS DE NOTICIAS -->
         <section class="space-y-6">
@@ -82,9 +70,6 @@
                                 <p class="text-sm text-gray-500">Publicado por <?= $post['author']['username'] ?> · <?= $post['updated_at_es']; ?></p>
                                 <p class="mt-2 text-sm"><?= $post['body'] ?? '' ?></p>
                             </div>
-                            <button class="text-gray-400 hover:text-gray-600" title="Más opciones">
-                                <span class="material-symbols-outlined">more_vert</span>
-                            </button>
                         </div>
                     </div>
 
@@ -118,25 +103,7 @@
                                 </div>
                             </div>
                         <?php endforeach; ?>
-
-                        <!-- Formulario nuevo comentario -->
-                        <form action="guardar_comentario.php" method="POST" class="mt-4 space-y-2">
-                            <input type="hidden" name="post_id" value="<?= $post['id'] ?>" />
-                            <textarea
-                                name="comentario"
-                                class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                rows="2"
-                                placeholder="Escribe un comentario..."></textarea>
-                            <div class="flex justify-end">
-                                <button
-                                    type="submit"
-                                    class="bg-blue-600 text-white text-sm px-3 py-1.5 rounded-md hover:bg-blue-700">
-                                    Publicar
-                                </button>
-                            </div>
-                        </form>
                     </div>
-
                 </article>
             <?php endforeach; ?>
         </section>
