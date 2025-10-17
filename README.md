@@ -68,8 +68,7 @@ A modern PHP web application built with MVC architecture, featuring a custom vie
 2. **Verify Configuration** in `config/env.php` (should already exist)
 
 ### Step 5: Access Application
-- **Main Application**: `http://localhost/puertas-adentro/public/`
-- **Login Page**: `http://localhost/puertas-adentro/public/login.php`
+- **Main Application**: `http://localhost`
 - **Test Credentials**:
   - Admin: `admin@example.com` / `password`
   - User: `james@example.com` / `password`
@@ -134,7 +133,7 @@ A modern PHP web application built with MVC architecture, featuring a custom vie
    - Select `puertas_adentro` database
    - Click "Import" tab
    - Choose file: `/opt/lampp/htdocs/puertas-adentro/migrations/init-db-script.sql`
-   - Click "Go" to execute
+   - Click "Import" to execute
 
 4. **Alternative: Command Line Import** (requires database to exist first):
    ```bash
@@ -170,8 +169,11 @@ A modern PHP web application built with MVC architecture, featuring a custom vie
    ```
 
 ### Step 5: Access Application
-- **Main Application**: `http://localhost/puertas-adentro/public/`
-- **Login Page**: `http://localhost/puertas-adentro/public/login.php`
+- **Application**: `http://localhost`
+- **Test Credentials**:
+  - Admin: `admin@example.com` / `password`
+  - User: `james@example.com` / `password`
+
 
 ### Step 6: Development Workflow (Optional)
 For easier development, you can create a deployment script:
@@ -203,7 +205,7 @@ sudo find "$HTDOCS_TARGET" -name "*.php" -exec chmod 755 {} \;
 sudo /opt/lampp/lampp restart
 
 echo "✅ Deployment completed!"
-echo "🌐 Project available at: http://localhost/puertas-adentro/public/"
+echo "🌐 Project available at: http://localhost"
 ```
 
 ---
