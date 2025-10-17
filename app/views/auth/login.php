@@ -26,19 +26,44 @@
         <p class="text-gray-600 mt-2">El portal de tu barrio privado.</p>
       </header>
 
-      <form method="post" action="#">
+      <!-- Bloque de errores (opcional, pero recomendado) -->
+      <?php if (!empty($errors)): ?>
+        <div class="mb-4 rounded-md bg-red-50 p-4">
+          <ul class="list-disc pl-5 text-sm text-red-700">
+            <?php foreach ($errors as $msg): ?>
+              <li><?= $this->escape($msg) ?></li>
+            <?php endforeach; ?>
+          </ul>
+        </div>
+      <?php endif; ?>
+
+      <form method="post" action="/login.php">
+        <!-- CSRF token: pegar inmediatamente después de abrir el <form> -->
+        <input type="hidden" name="csrf" value="<?= $this->escape($csrf ?? '') ?>">
+
         <div>
           <label for="login" class="block text-sm font-medium text-gray-700">Usuario o Email</label>
-          <input type="text" id="login" name="login" required autocomplete="username"
-                 placeholder="tu@ejemplo.com"
-                 class="form-input block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--accent-yellow)] focus:ring-[var(--accent-yellow)] sm:text-sm h-12 px-4" />
+          <input
+            type="text"
+            id="login"
+            name="login"
+            required
+            autocomplete="username"
+            placeholder="tu@ejemplo.com"
+            value="<?= $this->escape($oldLogin ?? '') ?>"  <!-- repoblado seguro -->
+            class="form-input block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--accent-yellow)] focus:ring-[var(--accent-yellow)] sm:text-sm h-12 px-4" />
         </div>
 
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
-          <input id="password" name="password" type="password" required autocomplete="current-password"
-                 placeholder="••••••••"
-                 class="form-input block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--accent-yellow)] focus:ring-[var(--accent-yellow)] sm:text-sm h-12 px-4" />
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            autocomplete="current-password"
+            placeholder="••••••••"
+            class="form-input block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--accent-yellow)] focus:ring-[var(--accent-yellow)] sm:text-sm h-12 px-4" />
         </div>
 
         <div class="flex items-center justify-end">
