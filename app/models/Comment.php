@@ -79,4 +79,14 @@ class Comment extends Model
 
         return $stmt->rowCount() > 0;
     }
+
+    public function getAllComments()
+    {
+        $stmt = $this->db->prepare(
+            "SELECT * FROM comments
+            WHERE deleted_at IS NULL"
+        );
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

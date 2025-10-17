@@ -1,84 +1,161 @@
-<div class="card">
-    <h2>¡Bienvenido a Puertas Adentro!</h2>
-    
-    <div class="welcome-content">
-        <p class="welcome-message">
-            Hola, <strong><?= $this->escape($userName) ?></strong>! 
-            Has iniciado sesión correctamente.
-        </p>
-        
-        <div class="info-section">
-            <h3>Información del Sistema</h3>
-            <ul class="info-list">
-                <li><strong>Entorno:</strong> <?= $this->escape($environment) ?></li>
-                <li><strong>Modo Desarrollo:</strong> <?= $isDevelopment ? 'Sí' : 'No' ?></li>
-                <li><strong>Fecha de Acceso:</strong> <?= date('d/m/Y H:i:s') ?></li>
-            </ul>
+<!-- 🔹 HEADER PRINCIPAL -->
+<header class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <!-- LOGO -->
+        <div class="flex items-center gap-3">
+            <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png"
+                alt="Logo Puertas Adentro" class="size-8">
+            <h1 class="text-lg font-bold text-blue-800 tracking-tight">
+                Administración Puertas Adentro
+            </h1>
         </div>
-        
-        <div class="actions">
-            <a href="/logout" class="btn btn-secondary">Cerrar Sesión</a>
+
+        <!-- Usuario admin + Panel -->
+        <div class="relative flex items-center gap-4">
+            <div id="avatarContainer" class="relative">
+                <div id="avatarImg"
+                    class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-blue-500 cursor-pointer"
+                    style='background-image:url("https://cdn-icons-png.flaticon.com/512/3135/3135715.png");'>
+                </div>
+
+                <!-- Panel emergente -->
+                <div id="adminPanel"
+                    class="hidden absolute right-0 mt-3 w-64 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50">
+                    <h4 class="font-semibold text-sm mb-1">Administrador</h4>
+                    <p class="text-sm"><?= $user['first_name'] ?> <?= $user['last_name'] ?></p>
+                    <button onclick="window.location.href='../home.php'"
+                        class="text-blue-700 text-sm hover:underline">
+                        Ir al portal público
+                    </button>
+                </div>
+            </div>
+
+            <!-- Botón logout -->
+            <?php include __DIR__ . '/partials/logout-button.php'; ?>
         </div>
     </div>
-</div>
+</header>
 
-<style>
-.welcome-content {
-    padding: 1rem 0;
-}
 
-.welcome-message {
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-    color: #2c3e50;
-}
+<!-- 🔸 CONTENIDO PRINCIPAL -->
+<main id="mainContent" class="flex-1 px-6 py-8 max-w-7xl mx-auto space-y-10">
+    
+    <section id="inicio">
+        <h2 class="text-xl font-semibold mb-6">Resumen general</h2>
+        
+        <!-- Tarjetas resumen -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                <p class="text-sm text-gray-500">Noticias publicadas</p>
+                <h3 class="text-2xl font-bold text-blue-700"><?php echo count($posts); ?></h3>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                <p class="text-sm text-gray-500">Usuarios registrados</p>
+                <h3 class="text-2xl font-bold text-green-600"><?php echo count($users); ?></h3>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                <p class="text-sm text-gray-500">Comentarios</p>
+                <h3 class="text-2xl font-bold text-gray-600"><?php echo count($comments); ?></h3>
+            </div>
+        </div>
+    </section>
 
-.info-section {
-    background: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 6px;
-    margin-bottom: 2rem;
-}
+    <nav class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-6 py-2 flex items-center gap-6 text-sm font-medium">
+            <button class="nav-tab text-blue-700 border-b-2 border-blue-700 pb-2" data-section="usuarios">Usuarios</button>
+            <button class="nav-tab text-gray-600 hover:text-blue-700 pb-2" data-section="posts">Noticias</button>
+        </div>
+    </nav>
 
-.info-section h3 {
-    color: #495057;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-}
+    <section id="usuarios" class="section">
+        <h2 class="text-xl font-semibold mb-6">Usuarios registrados</h2>
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+            <table class="w-full text-sm text-left text-gray-600">
+                <thead class="bg-gray-50 border-b border-gray-100 text-gray-700">
+                    <tr>
+                        <th class="px-4 py-2">Usuario</th>
+                        <th class="px-4 py-2">Correo</th>
+                        <th class="px-4 py-2">Nombre</th>
+                        <th class="px-4 py-2">Apellido</th>
+                        <th class="px-4 py-2 text-right">Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="userTable">
+                    <?php foreach ($users as $user): ?>
+                        <tr>
+                            <td class="px-4 py-2"><?= $user['username'] ?></td>
+                            <td class="px-4 py-2"><?= $user['email'] ?></td>
+                            <td class="px-4 py-2"><?= $user['first_name'] ?></td>
+                            <td class="px-4 py-2"><?= $user['last_name'] ?></td>
+                            <td class="px-4 py-2 text-right">
+                                <button class="text-red-600 hover:underline delete-user">Borrar</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </section>
 
-.info-list {
-    list-style: none;
-    padding: 0;
-}
+    <section id="posts" class="section hidden">
+        <h2 class="text-xl font-semibold mb-6">Posts publicados</h2>
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+            <table class="w-full text-sm text-left text-gray-600">
+                <thead class="bg-gray-50 border-b border-gray-100 text-gray-700">
+                    <tr>
+                        <th class="px-4 py-2">Autor</th>
+                        <th class="px-4 py-2">Título</th>
+                        <th class="px-4 py-2">Fecha</th>
+                        <th class="px-4 py-2 text-right">Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="postsTable">
+                    <?php foreach ($posts as $post): ?>
+                        <tr>
+                            <td class="px-4 py-2"><?= $post['first_name'] ?> <?= $post['last_name'] ?></td>
+                            <td class="px-4 py-2"><?= $post['title'] ?></td>
+                            <td class="px-4 py-2"><?= $post['updated_at'] ?></td>
+                            <td class="px-4 py-2 text-right">
+                                <button class="text-red-600 hover:underline delete-post">Eliminar</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
 
-.info-list li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #e9ecef;
-}
+<script>
+    // Mostrar / ocultar panel admin
+    const avatar = document.getElementById("avatarImg");
+    const panel = document.getElementById("adminPanel");
+    avatar.addEventListener("click", () => {
+        panel.classList.toggle("hidden");
+    });
+    document.addEventListener("click", (e) => {
+        if (!avatar.contains(e.target) && !panel.contains(e.target)) {
+            panel.classList.add("hidden");
+        }
+    });
 
-.info-list li:last-child {
-    border-bottom: none;
-}
+    // Tabs navegación
+    document.querySelectorAll(".nav-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            document.querySelectorAll(".section").forEach(sec => sec.classList.add("hidden"));
+            document.getElementById(tab.dataset.section).classList.remove("hidden");
+            document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("text-blue-700", "border-blue-700", "border-b-2"));
+            tab.classList.add("text-blue-700", "border-blue-700", "border-b-2");
+        });
+    });
 
-.actions {
-    text-align: center;
-    padding-top: 1rem;
-    border-top: 1px solid #e9ecef;
-}
+    // Eliminar usuario
+    document.querySelectorAll(".delete-user").forEach(btn => {
+        btn.addEventListener("click", e => e.target.closest("tr").remove());
+    });
 
-.btn-secondary {
-    background: #6c757d;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    text-decoration: none;
-    border-radius: 4px;
-    display: inline-block;
-    transition: background-color 0.3s;
-}
-
-.btn-secondary:hover {
-    background: #545b62;
-    color: white;
-    text-decoration: none;
-}
-</style>
+    // Eliminar post
+    document.querySelectorAll(".delete-post").forEach(btn => {
+        btn.addEventListener("click", e => e.target.closest("tr").remove());
+    });
+</script>

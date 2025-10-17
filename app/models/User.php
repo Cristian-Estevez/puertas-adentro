@@ -19,11 +19,19 @@ class User extends Model
 
     public function findById($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :id");
+        $stmt = $this->db->prepare(
+            "SELECT first_name, 
+                last_name, 
+                username, 
+                role, 
+                last_login_at,
+                image_url
+            FROM users 
+            WHERE id = :id"
+        );
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
 
     public function create($user)
     {

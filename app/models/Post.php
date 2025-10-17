@@ -17,9 +17,9 @@ class Post extends Model
     {
         $stmt = $this->db->prepare("
             INSERT INTO posts (
-                created_by, title, body
+                created_by, title, body, image_url
             ) VALUES (
-                :created_by, :title, :body
+                :created_by, :title, :body, :image_url
             )
         ");
 
@@ -28,7 +28,8 @@ class Post extends Model
         $stmt->execute([
             ':created_by' => $post['created_by'],
             ':title'      => $post['title'],
-            ':body'       => $post['body']
+            ':body'       => $post['body'],
+            ':image_url' => $post['image_url'] ?? null,
         ]);
 
         return $this->db->lastInsertId();
@@ -42,6 +43,7 @@ class Post extends Model
             SET 
                 title = :title,
                 body = :body,
+                image_url = :image_url,
                 updated_by = :updated_by,
                 updated_at = :updated_at
             WHERE id = :id
@@ -50,6 +52,7 @@ class Post extends Model
         $stmt->execute([
             ':title'       => $post['title'],
             ':body'        => $post['body'],
+            ':image_url' => $post['image_url'] ?? null,
             ':updated_by'  => $post['updated_by'],
             ':updated_at'  => date('Y-m-d H:i:s'),
             ':id'          => $post['id']
@@ -80,6 +83,18 @@ class Post extends Model
     {
         $stmt = $this->db->prepare("
             SELECT * FROM posts WHERE deleted_at IS NULL
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAllPostsWithAuthors()
+    {
+        $stmt = $this->db->prepare("
+            SELECT p.*, u.first_name, u.last_name, u.email 
+            FROM posts p
+            JOIN users u ON p.created_by = u.id
+            WHERE p.deleted_at IS NULL
         ");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

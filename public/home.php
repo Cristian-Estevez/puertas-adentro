@@ -1,12 +1,17 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/config/env.php';
+require_once dirname(__DIR__) . '/app/utils/login-utils.php';
+require_once dirname(__DIR__) . '/app/classes/View.php';
+require_once dirname(__DIR__) . '/app/controllers/HomeController.php';
 
-// si no está logueado → lo mando al login
-if (!isset($_SESSION['user_id'])) {
-    header("Location: /index.php");
-    exit;
+// Checks if session is started and starts it if not
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-// incluyo la vista principal del home
-include __DIR__ . '/../views/home/main.php';
+// Redirects to login if user is not authenticated
+require_login();
 
+$controller = new HomeController();
+$html = $controller->showView();
+echo $html;
