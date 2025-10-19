@@ -22,8 +22,7 @@
                 <div id="adminPanel"
                     class="hidden absolute right-0 mt-3 w-64 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50">
                     <h4 class="font-semibold text-sm mb-1">Administrador</h4>
-                    <p class="text-sm">Emanuel García</p>
-                    <p class="text-xs text-gray-500 mb-3">Último acceso: hoy 21:47</p>
+                    <p class="text-sm"><?= $user['first_name'] ?> <?= $user['last_name'] ?></p>
                     <button onclick="window.location.href='../home.php'"
                         class="text-blue-700 text-sm hover:underline">
                         Ir al portal público
@@ -117,7 +116,6 @@
                             <td class="px-4 py-2"><?= $post['title'] ?></td>
                             <td class="px-4 py-2"><?= $post['updated_at'] ?></td>
                             <td class="px-4 py-2 text-right">
-                                <button class="text-blue-600 hover:underline mr-3">Ver</button>
                                 <button class="text-red-600 hover:underline delete-post">Eliminar</button>
                             </td>
                         </tr>

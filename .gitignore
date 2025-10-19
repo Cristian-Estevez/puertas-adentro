@@ -4,9 +4,6 @@
 # Ignore application cache, logs, and uploads
 /var/
 
-# Ignore environment files
-.env
-
 # Ignore IDE and OS files
 *.swp
 *.swo
