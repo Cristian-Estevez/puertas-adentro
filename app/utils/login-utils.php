@@ -2,6 +2,81 @@
 require_once dirname(__DIR__) . '/classes/Database.php';
 require_once dirname(__DIR__) . '/models/User.php';
 
+// ---------------------------------------------------------------------
+// Utilidades de seguridad simples 
+// - e(): escape HTML (anti-XSS al mostrar variables del usuario)
+// - start_secure_session(): cookie HttpOnly + SameSite, rotación de ID y timeout
+// - csrf_token()/csrf_check(): protección CSRF para formularios POST
+// - validate_login_input(): validación/sanitización mínima para login
+// ---------------------------------------------------------------------
+
+/** Escapa texto para imprimir en HTML y prevenir XSS */
+function e(string $s): string {
+    return htmlspecialchars($s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+/** Inicia la sesión con opciones básicas de seguridad */
+function start_secure_session(array $cfg = []): void {
+    $secure = !empty($cfg['https']);                 // en XAMPP normalmente false (http)
+    $name   = $cfg['session_name']    ?? 'app_sess';
+    $ttl    = (int)($cfg['session_timeout'] ?? 1800); // 30 minutos
+
+    if (session_status() === PHP_SESSION_NONE) {
+        session_name($name);
+        session_set_cookie_params([
+            'lifetime' => 0,        // hasta cerrar navegador
+            'path'     => '/',
+            'secure'   => $secure,  // true solo con HTTPS real
+            'httponly' => true,     // JS no puede leer la cookie (mitiga XSS)
+            'samesite' => 'Lax',    // reduce CSRF básico
+        ]);
+        session_start();
+    }
+
+    // Rotar ID cada 5 minutos (anti session fixation)
+    if (!isset($_SESSION['created'])) $_SESSION['created'] = time();
+    if (time() - $_SESSION['created'] > 300) {
+        session_regenerate_id(true);
+        $_SESSION['created'] = time();
+    }
+
+    // Timeout por inactividad
+    if (isset($_SESSION['last_activity']) && time() - $_SESSION['last_activity'] > $ttl) {
+        session_unset();
+        session_destroy();
+        header('Location: /login.php?expired=1');
+        exit;
+    }
+    $_SESSION['last_activity'] = time();
+}
+
+/** Genera/recupera token CSRF para incluir en formularios */
+function csrf_token(): string {
+    if (empty($_SESSION['csrf'])) {
+        $_SESSION['csrf'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf'];
+}
+
+/** Verifica token CSRF recibido por POST contra el guardado en sesión */
+function csrf_check(?string $t): bool {
+    return isset($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], $t ?? '');
+}
+
+/** Validación/sanitización simple para el login */
+function validate_login_input($login, $password, array &$errors): array {
+    $login = trim((string)$login);
+    $password = (string)$password;
+
+    if ($login === '')    $errors[] = 'El usuario o email es obligatorio.';
+    if ($password === '') $errors[] = 'La contraseña es obligatoria.';
+    if (strlen($password) > 4096) $errors[] = 'La contraseña es inválida.';
+    if (strpos($login, '@') !== false && !filter_var($login, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'El formato de email es inválido.';
+    }
+    return [$login, $password];
+}
+
 // Global User instance for utility functions
 $userModel = new User();
 
@@ -119,20 +194,18 @@ function register_user(string $username, string $email, string $password, string
         return ['ok' => false, 'errors' => $errors];
     }
 
-    // Hasheo de contraseña (bcrypt por defecto en PHP; suficiente para el práctico)
+    // Hasheo de contraseña (bcrypt por defecto)
     $hash    = password_hash($password, PASSWORD_BCRYPT);
-    $display = $username; // Para MVP, usamos el mismo username como display_name
+    $display = $username; // MVP: display_name = username
 
     // Insert seguro con parámetros
-    $sql = 'INSERT INTO users (username, email, password_hash, role, display_name)
-            VALUES (:u, :e, :h, :r, :d)';
     global $userModel;
     $userModel->create([
-        'username' => $username,
-        'email' => $email,
+        'username'      => $username,
+        'email'         => $email,
         'password_hash' => $hash,
-        'role' => 'user',
-        'display_name' => $display,
+        'role'          => 'user',
+        'display_name'  => $display,
     ]);
 
     return ['ok' => true];
@@ -149,27 +222,35 @@ function register_user(string $username, string $email, string $password, string
 //   3) Verifica la contraseña con password_verify.
 //   4) Guarda en $_SESSION los datos mínimos (id, username, role).
 //   5) Actualiza last_login_at para auditoría básica.
+//   + Regenera el ID de sesión (anti fixation).
 // Devuelve true si inició correctamente; false si credenciales inválidas o usuario inactivo.
 // ------------------------------------------------------------
 function login_user(string $login, string $password): bool {
     global $userModel;
-    
-    // 1) Buscar por username O email usando el modelo User
+
     $u = $userModel->findByLogin($login);
-
-    // 2) Usuario inexistente o inactivo
     if (!$u) return false;
-    if (!(int)$u['is_active']) return false;
 
-    // 3) Verificar contraseña
-    if (!password_verify($password, $u['password_hash'])) return false;
+    // Compatibilidad: algunas DB usan 'is_active', otras 'active'
+    $isActive = isset($u['is_active']) ? (int)$u['is_active'] : ((int)($u['active'] ?? 1));
+    if ($isActive !== 1) return false;
 
-    // 4) Guardar identidad y rol en la sesión para el resto del sistema
-    $_SESSION['uid']    = (int)$u['id'];       // Identificador del usuario (int)
-    $_SESSION['uname']  = $u['username'];      // Nombre de usuario (para mostrar en UI)
-    $_SESSION['role']   = $u['role'];          // 'user' | 'admin'
+    // Compatibilidad: 'password_hash' o 'password'
+    $hash = $u['password_hash'] ?? ($u['password'] ?? null);
+    if (!$hash || !password_verify($password, $hash)) return false;
 
-    // 5) Marcar último acceso usando el modelo User
+    // Regenerar ID (anti fixation) y guardar mínimos en sesión
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_regenerate_id(true);
+    }
+    $_SESSION['uid']    = (int)$u['id'];
+    $_SESSION['uname']  = $u['username'];
+    $_SESSION['role']   = $u['role'];
+
+    // Rotar CSRF al iniciar sesión (opcional)
+    unset($_SESSION['csrf']);
+
+    // Auditoría básica
     $userModel->updateLastLogin($u['id']);
 
     return true;
@@ -179,39 +260,27 @@ function login_user(string $login, string $password): bool {
 // ------------------------------------------------------------
 // logout_user()
 // Cierra la sesión de manera segura.
-// Flujo:
-//   1) Limpia el array $_SESSION (variables en memoria).
-//   2) Invalida la cookie de sesión si existe (evita “revivir” la sesión).
-//   3) session_destroy() para destruir la sesión del lado del servidor.
-// No devuelve nada.
 // ------------------------------------------------------------
 function logout_user(): void {
-    // 1) Vaciar variables de sesión
     $_SESSION = [];
-
-    // 2) Invalidar la cookie de sesión (defensa extra)
     if (ini_get('session.use_cookies')) {
         $p = session_get_cookie_params();
         setcookie(
-            session_name(), // nombre de la cookie (igual al session_name activo)
+            session_name(),
             '',
-            time() - 42000, // expirada en el pasado
+            time() - 42000,
             $p['path'],
             $p['domain'],
             $p['secure'],
-            $p['httponly']
+            true // forzamos httponly
         );
     }
-
-    // 3) Destruir la sesión en el servidor
     session_destroy();
 }
 
 
 // ------------------------------------------------------------
 // user_id()
-// Devuelve el ID del usuario logueado o NULL si no hay sesión activa.
-// Útil para asociar recursos (posts, comentarios) al usuario actual.
 // ------------------------------------------------------------
 function user_id(): ?int {
     return $_SESSION['uid'] ?? null;
@@ -220,8 +289,6 @@ function user_id(): ?int {
 
 // ------------------------------------------------------------
 // user_name()
-// Devuelve el username del usuario logueado o NULL si no hay sesión.
-// Útil para mostrarlo en la interfaz (navbar, comentarios, etc.).
 // ------------------------------------------------------------
 function user_name(): ?string {
     return $_SESSION['uname'] ?? null;
@@ -230,9 +297,6 @@ function user_name(): ?string {
 
 // ------------------------------------------------------------
 // user_role()
-// Devuelve el rol del usuario actual. Si no hay sesión, por comodidad
-// devuelve 'user' (MVP). Si preferís, podés devolver '' y manejar aparte.
-// Roles válidos en este proyecto: 'user' y 'admin'.
 // ------------------------------------------------------------
 function user_role(): string {
     return $_SESSION['role'] ?? 'user';
@@ -241,9 +305,6 @@ function user_role(): string {
 
 // ------------------------------------------------------------
 // require_login()
-// “Middleware” simple para proteger páginas que requieren sesión.
-// Si no hay usuario logueado, redirige al login y corta la ejecución.
-// Ajustá la ruta de login según tu estructura de carpetas.
 // ------------------------------------------------------------
 function require_login(): void {
     if (!user_id()) {
@@ -256,8 +317,6 @@ function require_login(): void {
 
 // ------------------------------------------------------------
 // require_admin()
-// “Middleware” para proteger acciones/páginas solo para administradores.
-// Si no hay sesión o el rol no es 'admin', responde 403 y termina.
 // ------------------------------------------------------------
 function require_admin(): void {
     if (!user_id() || user_role() !== 'admin') {
