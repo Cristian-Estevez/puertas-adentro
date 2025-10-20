@@ -24,12 +24,14 @@
                     id="avatarMenu"
                     class="hidden absolute right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg p-2 w-56 z-50">
                     
-                    <h4 class="font-semibold text-sm mb-1">Administrador</h4>
+                    <h4 class="font-semibold text-sm mb-1"><?= $user['role'] === 'admin' ? 'Administrador' : 'Usuario' ?></h4>
                     <p class="text-sm"><?= $user['first_name'] ?> <?= $user['last_name'] ?></p>
-                    <button onclick="window.location.href='/'"
+                    <?php if ($user['role'] === 'admin'): ?>
+                    <button onclick="window.location.href='/'" 
                         class="text-blue-700 text-sm hover:underline">
                         Ir al panel de administración
                     </button>
+                    <?php endif; ?>
                     <p class="text-xs font-medium mb-2 text-center text-gray-500">Elegir avatar</p>
                     <div class="flex justify-around">
                         <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Hombre"
