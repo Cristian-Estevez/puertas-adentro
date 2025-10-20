@@ -50,7 +50,7 @@
             required
             autocomplete="username"
             placeholder="tu@ejemplo.com"
-            value="<?= $this->escape($oldLogin ?? '') ?>"  <!-- repoblado seguro -->
+            value="<?= $this->escape($oldLogin ?? '') ?>
             class="form-input block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--accent-yellow)] focus:ring-[var(--accent-yellow)] sm:text-sm h-12 px-4" />
         </div>
 
