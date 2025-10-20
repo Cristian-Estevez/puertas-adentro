@@ -71,7 +71,7 @@ A modern PHP web application built with MVC architecture, featuring a custom vie
 - **Main Application**: `http://localhost`
 - **Test Credentials**:
   - Admin: `admin@ejemplo.com` / `password`
-  - User: `santiago@ejemplo.com` / `password`
+  - User: `james@ejemplo.com` / `password`
 
 ---
 
