@@ -70,8 +70,8 @@ A modern PHP web application built with MVC architecture, featuring a custom vie
 ### Step 5: Access Application
 - **Main Application**: `http://localhost`
 - **Test Credentials**:
-  - Admin: `admin@example.com` / `password`
-  - User: `james@example.com` / `password`
+  - Admin: `admin@ejemplo.com` / `password`
+  - User: `santiago@ejemplo.com` / `password`
 
 ---
 
@@ -171,8 +171,8 @@ A modern PHP web application built with MVC architecture, featuring a custom vie
 ### Step 5: Access Application
 - **Application**: `http://localhost`
 - **Test Credentials**:
-  - Admin: `admin@example.com` / `password`
-  - User: `james@example.com` / `password`
+  - Admin: `admin@ejemplo.com` / `password`
+  - User: `santiago@ejemplo.com` / `password`
 
 
 ### Step 6: Development Workflow (Optional)
@@ -285,10 +285,10 @@ After successful database import, you can use these accounts:
 
 | Role | Email | Username | Password |
 |------|-------|----------|----------|
-| Admin | admin@example.com | admin | password |
-| User | james@example.com | james | password |
-| User | michael@example.com | michael | password |
-| User | sarah@example.com | sarah | password |
+| Admin | admin@ejemplo.com | admin | password |
+| User | santiago@ejemplo.com | santiago | password |
+| User | miguel@ejemplo.com | miguel | password |
+| User | sara@ejemplo.com | sara | password |
 
 ---
 

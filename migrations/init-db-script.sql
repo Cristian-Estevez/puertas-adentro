@@ -93,13 +93,13 @@ CREATE TABLE likes (
 -- ===============================
 
 INSERT INTO users (email, first_name, last_name, username, password, active, role, created_at, updated_at, image_url) VALUES
-('admin@example.com',      'David',   'Miller',    'admin',    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'admin', NOW(), NOW(), 'https://cdn-icons-png.flaticon.com/128/3135/3135715.png'),
-('james@example.com',     'Santiago', 'Wilson',    'james',    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user',  NOW(), NOW(), 'https://cdn-icons-png.flaticon.com/128/4140/4140037.png'),
-('michael@example.com',   'Miguel',   'Benítez',   'michael',  '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user',  NOW(), NOW(), 'https://cdn-icons-png.flaticon.com/128/4202/4202835.png'),
-('sarah@example.com',     'Sara',     'Paredes',   'sarah',    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user',  NOW(), NOW(), 'https://cdn-icons-png.flaticon.com/128/4140/4140060.png'),
-('emma@example.com',      'Emma',     'Domínguez', 'emma',     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user',  NOW(), NOW(), 'https://cdn-icons-png.flaticon.com/128/4139/4139951.png'),
-('alex@example.com',      'Alex',     'Gómez',     'alex',     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user',  NOW(), NOW(), 'https://cdn-icons-png.flaticon.com/128/4526/4526437.png'),
-('sophia@example.com',    'Sofía',    'Andrade',  'sophia',    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user',  NOW(), NOW(), 'https://cdn-icons-png.flaticon.com/128/3135/3135789.png');
+('admin@ejemplo.com',      'David',   'Miller',    'admin',    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'admin', NOW(), NOW(), 'https://cdn-icons-png.flaticon.com/128/3135/3135715.png'),
+('santiago@ejemplo.com',   'Santiago', 'Wilson',    'santiago', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user',  NOW(), NOW(), 'https://cdn-icons-png.flaticon.com/128/4140/4140037.png'),
+('miguel@ejemplo.com',     'Miguel',   'Benítez',   'miguel',   '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user',  NOW(), NOW(), 'https://cdn-icons-png.flaticon.com/128/4202/4202835.png'),
+('sara@ejemplo.com',       'Sara',     'Paredes',   'sara',     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user',  NOW(), NOW(), 'https://cdn-icons-png.flaticon.com/128/4140/4140060.png'),
+('emma@ejemplo.com',       'Emma',     'Domínguez', 'emma',     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user',  NOW(), NOW(), 'https://cdn-icons-png.flaticon.com/128/4139/4139951.png'),
+('alex@ejemplo.com',       'Alex',     'Gómez',     'alex',     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user',  NOW(), NOW(), 'https://cdn-icons-png.flaticon.com/128/4526/4526437.png'),
+('sofia@ejemplo.com',      'Sofía',    'Andrade',   'sofia',    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE, 'user',  NOW(), NOW(), 'https://cdn-icons-png.flaticon.com/128/3135/3135789.png');
 
 -- ===============================
 -- SEED: POSTS
