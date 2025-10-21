@@ -41,12 +41,35 @@ class RegisterController
 
         $errors = [];
         if ($email === '') $errors[] = 'El email es obligatorio.';
+        // Email validacion.
+        if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'El email no tiene un formato válido.';
+        }
         if ($confirmEmail === '') $errors[] = 'El email de confirmación es obligatorio.';
         if ($email !== '' && $confirmEmail !== '' && $confirmEmail !== $email) $errors[] = 'El email ingresados no coinciden.';
         if ($firstName === '') $errors[] = 'El nombre es obligatorio.';
         if ($lastName === '') $errors[] = 'El apellido es obligatorio.';
         if ($username === '') $errors[] = 'El nombre de usuario es obligatorio.';
         if ($password === '') $errors[] = 'La contraseña es obligatoria.';
+        
+        // Validacion de registro para creacion segura de password.
+        if ($password !== '') {
+            if (strlen($password) < 8) {
+                $errors[] = 'La contraseña debe tener al menos 8 caracteres.';
+            }
+            if (!preg_match('/[A-Z]/', $password)) {
+                $errors[] = 'La contraseña debe contener al menos una letra mayúscula.';
+            }
+            if (!preg_match('/[a-z]/', $password)) {
+                $errors[] = 'La contraseña debe contener al menos una letra minúscula.';
+            }
+            if (!preg_match('/[0-9]/', $password)) {
+                $errors[] = 'La contraseña debe contener al menos un número.';
+            }
+            if (!preg_match('/[^\w]/', $password)) {
+                $errors[] = 'La contraseña debe contener al menos un carácter especial.';
+            }
+        }
         if ($confirmPassword === '') $errors[] = 'La confirmación de la contraseña es obligatoria.';
         if ($password !== '' && $confirmPassword !== '' && $password !== $confirmPassword) {
             $errors[] = 'Las contraseñas no coinciden.';

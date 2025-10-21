@@ -71,7 +71,7 @@ A modern PHP web application built with MVC architecture, featuring a custom vie
 - **Main Application**: `http://localhost`
 - **Test Credentials**:
   - Admin: `admin@ejemplo.com` / `password`
-  - User: `james@ejemplo.com` / `password`
+  - User: `santiago@ejemplo.com` / `password`
 
 ---
 
@@ -370,6 +370,7 @@ puertas-adentro/
 │   │   └── User.php             # User model
 │   ├── utils/                    # Utility functions
 │   │   └── login-utils.php      # Login helper functions
+│   │   └── date-utils.php      # date helper functions
 │   └── views/                    # Template files
 │       ├── layouts/              # Layout templates
 │       │   └── main.php         # Main layout wrapper
